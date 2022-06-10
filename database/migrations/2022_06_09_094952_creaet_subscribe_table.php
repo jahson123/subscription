@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('status');
             $table->string('service');
             $table->float('charge_price');
+            $table->dateTime('unsubscribe_time', $precision = 0)->nullable();
+            $table->dateTime('subscribe_time', $precision = 0)->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscribe');
+        Schema::dropIfExists('subscribes');
     }
 };
