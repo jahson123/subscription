@@ -8,15 +8,6 @@
         <div v-if="isMassEdit == true">
             <Panel :header="'Msisdn - ' +  data.msisdn.toString()" :toggleable="true"
                     v-for="data in selectedSubscribe" :key="data">
-                <!--
-                    <template #icons>
-                        <div v-if="isMassEdit == true">
-                            <button class="p-panel-header-icon p-link mr-2" @click="toggle">
-                                <span class="pi pi-cog"></span>
-                            </button>
-                        </div>
-                    </template>
-                -->
                 <UpdateSubscribeForm :data="data"  />
             </Panel>
         </div>
