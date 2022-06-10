@@ -14,6 +14,8 @@ class Subscribe extends Model
         'status',
         'charge_price',
         'service',
+        'unsubscribe_time',
+        'subscribe_time',
     ];
 
     protected $guarded = [
