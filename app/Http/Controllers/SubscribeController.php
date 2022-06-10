@@ -6,6 +6,7 @@ use App\Models\Subscribe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Carbon;
 
 class SubscribeController extends Controller
 {
@@ -27,12 +28,14 @@ class SubscribeController extends Controller
         $data = $validator->validated();
 
         $subscribe = Subscribe::create([
-            'msisdn'       => $data['msisdn'],
-            'shortcode'    => $data['shortcode'],
-            'keyword'      => $data['keyword'],
-            'status'       => $data['status'],
-            'service'      => $data['service'],
-            'charge_price' => $data['charge_price']
+            'msisdn'           => $data['msisdn'],
+            'shortcode'        => $data['shortcode'],
+            'keyword'          => $data['keyword'],
+            'status'           => $data['status'],
+            'service'          => $data['service'],
+            'charge_price'     => $data['charge_price'],
+            'unsubscribe_time' => ($data['status'] == "inactive" ? Carbon::now() : null ),
+            'subscribe_time'   => ($data['status'] == "inactive" ? null : Carbon::now()),
         ]);
 
         return $subscribe;
@@ -63,13 +66,20 @@ class SubscribeController extends Controller
 
         $data = $validator->validated();
 
-        $subscribe = Subscribe::where('id', $id)
-                    ->first()
-                    ->update([
-                        'status'       => $data['status'],
-                        'service'      => $data['service'],
-                        'charge_price' => $data['charge_price']
-                    ]);
+        $subscribe = Subscribe::where('id', $id)->first();
+        $subscribe->update([
+            'status'       => $data['status'],
+            'service'      => $data['service'],
+            'charge_price' => $data['charge_price'],
+        ]);
+
+        if ($data['status'] == "inactive") {
+            $subscribe->update(['unsubscribe_time' => Carbon::now()]);
+        }
+        else {
+            $subscribe->update(['subscribe_time' => Carbon::now()]);
+        }
+
 
         return $subscribe;
     }
@@ -87,14 +97,19 @@ class SubscribeController extends Controller
             $data = $validator->validated();
             $id = $request->post()[$i]['id'];
 
-            $subscribe = Subscribe::where('id', $id)
-                        ->first()
-                        ->update([
-                            'status'       => $data['status'],
-                            'service'      => $data['service'],
-                            'charge_price' => $data['charge_price']
-                        ]);
+            $subscribe = Subscribe::where('id', $id)->first();
+            $subscribe->update([
+                'status'       => $data['status'],
+                'service'      => $data['service'],
+                'charge_price' => $data['charge_price'],
+            ]);
 
+            if ($data['status'] == "inactive") {
+                $subscribe->update(['unsubscribe_time' => Carbon::now()]);
+            }
+            else {
+                $subscribe->update(['subscribe_time' => Carbon::now()]);
+            }
         }
         return;
     }
